@@ -6,8 +6,8 @@ using Uber.Common.Entities;
 namespace Uber.Common.Repositories
 {
     public abstract class BaseRepository<T, V> : IRepository<T, V>
-       where T : Entity<V>
-       where V : struct
+           where T : Entity<V>
+           where V : struct
     {
         protected readonly DbContext _context;
         private IDbContextTransaction? _transaction;
@@ -43,10 +43,15 @@ namespace Uber.Common.Repositories
 
         public virtual async Task<bool> DeleteAsync(V id, CancellationToken cancellationToken = default)
         {
-            int deleted = await _context.Set<T>()
-                                .Where(t => t.Id.Equals(id))
-                                .ExecuteDeleteAsync(cancellationToken);
-            return deleted > 0;
+            var entity = await _context.Set<T>().FindAsync(new object[] { id }, cancellationToken);
+            if (entity == null)
+            {
+                return false;
+            }
+
+            _context.Set<T>().Remove(entity);
+            await _context.SaveChangesAsync(cancellationToken);
+            return true;
         }
 
         public virtual async Task<bool> ExistsAsync(V id, CancellationToken cancellationToken = default)

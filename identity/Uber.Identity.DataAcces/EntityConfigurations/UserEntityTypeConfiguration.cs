@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Uber.Common.Entities;
+using Uber.Common.Entities.Constants;
 using Uber.Identity.Domain.Entities;
 
 namespace Uber.Identity.DataAcces.EntityConfigurations
@@ -9,17 +11,20 @@ namespace Uber.Identity.DataAcces.EntityConfigurations
     {
         protected override void ConfigureEntity(EntityTypeBuilder<User> builder)
         {
-            modelBuilder.Entity<User>()
-                .HasIndex(u => u.Email)
-            .IsUnique();
+            builder.Property(c => c.Id)
+                .HasColumnName(FiledNames.UserId);
 
-            modelBuilder.Entity<User>()
-                .Property(u => u.Role)
-            .HasConversion<string>();
+            builder.Property(c => c.Name)
+                .HasMaxLength(Sizes.NameMaxLength)
+                .IsRequired();
 
-            modelBuilder.Entity<User>()
-                .Property(u => u.CreatedAt)
-                .HasDefaultValueSql("CURRENT_TIMESTAMP");
+            builder.Property(c => c.Email)
+                .HasMaxLength(Sizes.EmailMaxLength)
+                .IsRequired();
+
+            builder.Property(c => c.CreatedAt)
+                .HasDefaultValueSql(DefaultValue.SysDateTimeOffset)
+                .IsRequired();
         }
     }
 }

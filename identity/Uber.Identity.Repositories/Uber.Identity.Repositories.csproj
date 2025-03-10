@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\common\Uber.Common\Uber.Common.csproj" />
+    <ProjectReference Include="..\Uber.Identity.Domain\Uber.Identity.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
